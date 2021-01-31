@@ -12,11 +12,11 @@ The first argument is the type of operation to play with.
     * sub means substractions.
     * mul means multiplications.
 
-The second argument is the largest table to use in the questions, and it should
-be a number from 1 to 10. For example, to play with additions up to 6+SOMETHING,
-use:
+The second argument is the largest "table" to use in the questions, and it
+should be a number from 1 to 10. For example, to play with additions up to
+6+SOMETHING, use:
 
     mathgame.py add 6
 
- To stop playing the game at any point in time, answer "q" to the question or
- press Ctrl+C.
+To stop playing the game at any point in time, answer "q" to the question or
+press Ctrl+C.
