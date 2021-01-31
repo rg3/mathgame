@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2021 Ricardo Garcia <r@rg3.name>
-#
 # SPDX-License-Identifier: CC0-1.0
 
 MathGame: Game to play with additions, substractions and multiplications

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # SPDX-FileCopyrightText: 2021 Ricardo Garcia <r@rg3.name>
-#
 # SPDX-License-Identifier: MIT
 
 import random
