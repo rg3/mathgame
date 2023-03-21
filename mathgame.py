@@ -68,6 +68,8 @@ class Game(object):
         for i in range(combiner_min, combiner_max+1):
             self.combinations.extend(self.tableGenerator.table(i))
         self.quitAnswer = "q"
+        self.rightAnswers = 0
+        self.wrongAnswers = 0
 
     def run(self):
         print("Welcome! To quit the game, answer '%s' to any question" % (self.quitAnswer,))
@@ -85,6 +87,11 @@ class Game(object):
             if not continue_playing:
                 break
 
+    def stats(self):
+        total = self.rightAnswers + self.wrongAnswers
+        percent = float(self.rightAnswers) / float(total) * 100.0
+        return 'Wrong: %d; Right: %d (%.1f%%)' % (self.wrongAnswers, self.rightAnswers, percent)
+
     def ask(self, question):
         correct_sign = "\u2713 Yes!"
         incorrect_sign = "\u2717 No"
@@ -97,10 +104,12 @@ class Game(object):
             try:
                 numerical_answer = int(answer)
                 if numerical_answer == correct_answer:
-                    print(correct_sign)
+                    self.rightAnswers += 1
+                    print('%s [%s]' % (correct_sign, self.stats()))
                     break
                 else:
-                    print(incorrect_sign)
+                    self.wrongAnswers += 1
+                    print('%s [%s]' % (incorrect_sign, self.stats()))
             except ValueError:
                 print(incorrect_sign)
         return True
