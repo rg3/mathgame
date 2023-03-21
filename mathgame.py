@@ -116,13 +116,20 @@ class Game(object):
 
 if __name__ == "__main__":
     def usage():
-        sys.exit("Usage: %s add|sub|mul NUMBER_FROM_1_TO_10" % (sys.argv[0], ))
+        sys.exit("Usage: %s add|sub|mul [MIN] MAX\n\nWhere MIN and MAX are numbers from 1 to 10\n" % (sys.argv[0], ))
 
-    if len(sys.argv) != 3:
+    arg_count = len(sys.argv)
+    if arg_count not in [3,4]:
         usage()
 
     operation_arg = sys.argv[1]
-    max_table_arg = sys.argv[2]
+
+    if arg_count == 3:
+        min_table_arg = '1'
+        max_table_arg = sys.argv[2]
+    else:
+        min_table_arg = sys.argv[2]
+        max_table_arg = sys.argv[3]
 
     operation_classes = dict()
     operation_classes['add'] = Addition
@@ -134,14 +141,22 @@ if __name__ == "__main__":
     used_operation = operation_classes[operation_arg]()
     table_generator = TableGenerator(used_operation)
 
-    try:
-        max_value = int(max_table_arg)
-        if max_value < 1 or max_value > 10:
-            raise ValueError
-    except ValueError:
+    def parse_numeric_arg (arg_str):
+        try:
+            parsed_value = int(arg_str)
+            if parsed_value < 1 or parsed_value > 10:
+                raise ValueError
+            return parsed_value
+        except ValueError:
+            usage()
+
+    min_value = parse_numeric_arg(min_table_arg)
+    max_value = parse_numeric_arg(max_table_arg)
+
+    if min_value > max_value:
         usage()
 
-    game = Game(table_generator, used_operation, 1, max_value)
+    game = Game(table_generator, used_operation, min_value, max_value)
     try:
         game.run()
     except KeyboardInterrupt:
