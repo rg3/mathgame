@@ -61,11 +61,11 @@ class TableGenerator(object):
         return result
 
 class Game(object):
-    def __init__(self, table_generator, used_operation, combiner_min, combiner_max):
+    def __init__(self, table_generator, used_operation, combiner_list):
         self.tableGenerator = table_generator
         self.usedOperation = used_operation
         self.combinations = []
-        for i in range(combiner_min, combiner_max+1):
+        for i in combiner_list:
             self.combinations.extend(self.tableGenerator.table(i))
         self.quitAnswer = "q"
         self.rightAnswers = 0
@@ -116,20 +116,13 @@ class Game(object):
 
 if __name__ == "__main__":
     def usage():
-        sys.exit("Usage: %s add|sub|mul [MIN] MAX\n\nWhere MIN and MAX are numbers from 1 to 10\n" % (sys.argv[0], ))
+        sys.exit("Usage: %s add|sub|mul NUMBER_FROM_1_TO_10..." % (sys.argv[0], ))
 
     arg_count = len(sys.argv)
-    if arg_count not in [3,4]:
+    if arg_count < 3:
         usage()
 
     operation_arg = sys.argv[1]
-
-    if arg_count == 3:
-        min_table_arg = '1'
-        max_table_arg = sys.argv[2]
-    else:
-        min_table_arg = sys.argv[2]
-        max_table_arg = sys.argv[3]
 
     operation_classes = dict()
     operation_classes['add'] = Addition
@@ -150,13 +143,12 @@ if __name__ == "__main__":
         except ValueError:
             usage()
 
-    min_value = parse_numeric_arg(min_table_arg)
-    max_value = parse_numeric_arg(max_table_arg)
+    values = []
+    for numeric_arg in sys.argv[2:]:
+        values.append(parse_numeric_arg(numeric_arg))
+    values = sorted(list(set(values))) # Remove duplicates.
 
-    if min_value > max_value:
-        usage()
-
-    game = Game(table_generator, used_operation, min_value, max_value)
+    game = Game(table_generator, used_operation, values)
     try:
         game.run()
     except KeyboardInterrupt:
