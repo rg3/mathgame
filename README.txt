@@ -3,7 +3,7 @@
 
 MathGame: Game to play with additions, substractions and multiplications
 
-Usage: mathgame.py add|sub|mul NUMBER_FROM_1_TO_10
+Usage: mathgame.py add|sub|mul NUMBER_FROM_1_TO_10...
 
 The first argument is the type of operation to play with.
 
@@ -11,11 +11,11 @@ The first argument is the type of operation to play with.
     * sub means substractions.
     * mul means multiplications.
 
-The second argument is the largest "table" to use in the questions, and it
-should be a number from 1 to 10. For example, to play with additions up to
-6+SOMETHING, use:
+The second and subsequent arguments are the "tables" to use in the questions,
+and they should be numbers from 1 to 10. For example, to play with additions
+using in the form of 2+SOMETHING and 6+SOMETHING, use:
 
-    mathgame.py add 6
+    mathgame.py add 2 6
 
 To stop playing the game at any point in time, answer "q" to the question or
 press Ctrl+C.
