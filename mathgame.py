@@ -3,8 +3,16 @@
 # SPDX-FileCopyrightText: 2021 Ricardo Garcia <r@rg3.name>
 # SPDX-License-Identifier: MIT
 
+import os
 import random
 import sys
+
+class ScreenClearer(object):
+    def __init__(self):
+        self.cmd = 'cls' if os.name == 'nt' else 'clear'
+
+    def clear(self):
+        os.system(self.cmd)
 
 class Operation(object):
     def valid (self, a, b):
@@ -70,10 +78,13 @@ class Game(object):
         self.quitAnswer = "q"
         self.rightAnswers = 0
         self.wrongAnswers = 0
+        self.CORRECT_SIGN = "\u2713 Yes!"
+        self.INCORRECT_SIGN = "\u2717 No"
+        self.currentSign = "Welcome! To quit the game, answer '%s' to any question" % (self.quitAnswer,)
 
     def run(self):
-        print("Welcome! To quit the game, answer '%s' to any question" % (self.quitAnswer,))
         questions = []
+        clearer = ScreenClearer()
         while True:
             if len(questions) == 0:
                 questions = self.combinations[:]
@@ -83,18 +94,22 @@ class Game(object):
             question = questions[next_idx]
             del questions[next_idx]
 
+            clearer.clear()
+            print('%s' % self.currentSign)
+            print('%s' % self.stats())
             continue_playing = self.ask(question)
             if not continue_playing:
                 break
 
     def stats(self):
         total = self.rightAnswers + self.wrongAnswers
-        percent = float(self.rightAnswers) / float(total) * 100.0
-        return 'Wrong: %d; Right: %d (%.1f%%)' % (self.wrongAnswers, self.rightAnswers, percent)
+        percent_good = 0.0 if total == 0 else (float(self.rightAnswers) / float(total) * 100.0)
+        percent_bad  = 0.0 if total == 0 else (100.0 - percent_good)
+        good_sign = 'Right: %10d (%.1f%%)' % (self.rightAnswers, percent_good)
+        bad_sign  = 'Wrong: %10d (%.1f%%)' % (self.wrongAnswers, percent_bad)
+        return '%s\n%s' % (good_sign, bad_sign)
 
     def ask(self, question):
-        correct_sign = "\u2713 Yes!"
-        incorrect_sign = "\u2717 No"
         a, b = question
         correct_answer = self.usedOperation.result(a, b)
         while True:
@@ -104,14 +119,14 @@ class Game(object):
             try:
                 numerical_answer = int(answer)
                 if numerical_answer == correct_answer:
+                    self.currentSign = self.CORRECT_SIGN
                     self.rightAnswers += 1
-                    print('%s [%s]' % (correct_sign, self.stats()))
                     break
                 else:
+                    self.currentSign = self.INCORRECT_SIGN
                     self.wrongAnswers += 1
-                    print('%s [%s]' % (incorrect_sign, self.stats()))
             except ValueError:
-                print(incorrect_sign)
+                pass
         return True
 
 if __name__ == "__main__":
