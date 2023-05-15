@@ -85,7 +85,8 @@ class Game(object):
     def run(self):
         questions = []
         clearer = ScreenClearer()
-        while True:
+        continue_playing = True
+        while continue_playing:
             if len(questions) == 0:
                 questions = self.combinations[:]
                 random.shuffle(questions)
@@ -94,12 +95,17 @@ class Game(object):
             question = questions[next_idx]
             del questions[next_idx]
 
-            clearer.clear()
-            print('%s' % self.currentSign)
-            print('%s' % self.stats())
-            continue_playing = self.ask(question)
-            if not continue_playing:
-                break
+            # Repeat the question until it's right or we have to stop playing.
+            while True:
+                clearer.clear()
+                print('%s' % self.currentSign)
+                print('%s' % self.stats())
+                result = self.ask(question)
+                if result is None:
+                    continue_playing = False
+                    break
+                elif result:
+                    break
 
     def stats(self):
         total = self.rightAnswers + self.wrongAnswers
@@ -109,25 +115,26 @@ class Game(object):
         bad_sign  = 'Wrong: %10d (%.1f%%)' % (self.wrongAnswers, percent_bad)
         return '%s\n%s' % (good_sign, bad_sign)
 
+    # Returns True if the answer was right, False if not, None if we need to quit the game.
     def ask(self, question):
         a, b = question
         correct_answer = self.usedOperation.result(a, b)
         while True:
             answer = input("%s %s %s = " % (a, self.usedOperation.symbol(), b))
             if answer.lower() == self.quitAnswer:
-                return False
+                return None
             try:
                 numerical_answer = int(answer)
-                if numerical_answer == correct_answer:
+                is_right = (numerical_answer == correct_answer)
+                if is_right:
                     self.currentSign = self.CORRECT_SIGN
                     self.rightAnswers += 1
-                    break
                 else:
                     self.currentSign = self.INCORRECT_SIGN
                     self.wrongAnswers += 1
+                return is_right
             except ValueError:
                 pass
-        return True
 
 if __name__ == "__main__":
     def usage():
